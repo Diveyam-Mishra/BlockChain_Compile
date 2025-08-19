@@ -104,11 +104,13 @@ export const artifactsApi = {
 
 // Verification endpoints
 export const verificationApi = {
-  submitByArtifact: (artifact_id: string, profile_id: string) =>
-    req<any>(`/api/v1/verification/blockchain-integration/by-artifact/${artifact_id}`, {
-      method: 'POST',
-      body: JSON.stringify({ profile_id }),
-    }),
+  submit: (artifact_id: string, profile_id: string, wallet_address: string) => {
+    const fd = new FormData();
+    fd.append('artifact_id', artifact_id);
+    fd.append('profile_id', profile_id);
+    fd.append('wallet_address', wallet_address);
+    return reqForm<any>(`/api/v1/verification/submit`, fd);
+  },
   status: (artifact_hash: string) => req<any>(`/api/v1/verification/status/${artifact_hash}`),
   reports: (artifact_hash: string) => req<any>(`/api/v1/verification/reports/${artifact_hash}`),
 };

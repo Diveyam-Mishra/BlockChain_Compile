@@ -8,6 +8,7 @@ import CompliPortalHome from "./pages/CompliPortalHome";
 import CompanyPortal from "./pages/CompanyPortal";
 import AuditorPortal from "./pages/AuditorPortal";
 import NotFound from "./pages/NotFound";
+import { WalletProvider } from "./contexts/WalletContext";
 
 const queryClient = new QueryClient();
 
@@ -16,16 +17,18 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/compli" element={<CompliPortalHome />} />
-          <Route path="/company" element={<CompanyPortal />} />
-          <Route path="/auditor" element={<AuditorPortal />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <WalletProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/compli" element={<CompliPortalHome />} />
+            <Route path="/company" element={<CompanyPortal />} />
+            <Route path="/auditor" element={<AuditorPortal />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </WalletProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
