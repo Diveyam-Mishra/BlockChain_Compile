@@ -1,0 +1,219 @@
+#pragma version 8
+txn ApplicationID
+int 0
+==
+bnz main_l28
+txna ApplicationArgs 0
+byte "set_oracle"
+==
+bnz main_l25
+txna ApplicationArgs 0
+byte "submit_verification"
+==
+bnz main_l16
+txna ApplicationArgs 0
+byte "update_verification"
+==
+bnz main_l9
+txna ApplicationArgs 0
+byte "query_verification"
+==
+bnz main_l6
+err
+main_l6:
+txna ApplicationArgs 1
+box_get
+store 9
+store 8
+load 9
+bnz main_l8
+int 0
+itob
+log
+int 1
+return
+main_l8:
+load 8
+extract 0 8
+log
+int 1
+return
+main_l9:
+txn Sender
+byte "oracle_address"
+app_global_get
+==
+!
+bnz main_l15
+txna ApplicationArgs 1
+box_get
+store 3
+store 2
+load 3
+!
+bnz main_l14
+txna ApplicationArgs 2
+len
+int 64
+>
+bnz main_l13
+txna ApplicationArgs 1
+int 0
+txna ApplicationArgs 3
+btoi
+itob
+box_replace
+txna ApplicationArgs 1
+int 48
+global LatestTimestamp
+itob
+box_replace
+load 2
+extract 56 8
+btoi
+store 4
+int 128
+store 5
+int 64
+txna ApplicationArgs 2
+len
+-
+store 7
+txna ApplicationArgs 2
+len
+itob
+txna ApplicationArgs 2
+byte 0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+int 0
+load 7
+substring3
+concat
+concat
+store 6
+txna ApplicationArgs 1
+load 5
+load 6
+box_replace
+int 1
+return
+main_l13:
+byte "ERR_OSCAL_TOO_LONG"
+log
+int 0
+return
+main_l14:
+byte "ERR_BOX_MISSING"
+log
+int 0
+return
+main_l15:
+byte "ERR_NOT_ORACLE"
+log
+int 0
+return
+main_l16:
+txna ApplicationArgs 1
+len
+int 32
+!=
+txna ApplicationArgs 1
+len
+int 0
+==
+||
+bnz main_l24
+txna ApplicationArgs 2
+len
+int 64
+>
+bnz main_l23
+txna ApplicationArgs 1
+box_get
+store 1
+store 0
+load 1
+bnz main_l22
+txna ApplicationArgs 1
+int 200
+box_create
+bnz main_l21
+byte "ERR_BOX_CREATE_FAILED"
+log
+int 0
+return
+main_l21:
+txna ApplicationArgs 1
+int 0
+itob
+txn Sender
+concat
+global LatestTimestamp
+itob
+concat
+int 0
+itob
+concat
+txna ApplicationArgs 2
+len
+itob
+concat
+txna ApplicationArgs 2
+byte 0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+int 0
+int 64
+txna ApplicationArgs 2
+len
+-
+substring3
+concat
+concat
+int 0
+itob
+byte 0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+extract 0 64
+concat
+concat
+box_put
+int 1
+return
+main_l22:
+byte "ERR_BOX_EXISTS"
+log
+int 0
+return
+main_l23:
+byte "ERR_PROFILE_TOO_LONG"
+log
+int 0
+return
+main_l24:
+byte "ERR_BAD_ARTIFACT_KEY"
+log
+int 0
+return
+main_l25:
+txn Sender
+byte "admin"
+app_global_get
+==
+!
+bnz main_l27
+byte "oracle_address"
+txna ApplicationArgs 1
+app_global_put
+int 1
+return
+main_l27:
+byte "ERR_NOT_ADMIN"
+log
+int 0
+return
+main_l28:
+byte "admin"
+global CreatorAddress
+app_global_put
+byte "oracle_address"
+global ZeroAddress
+app_global_put
+int 1
+return

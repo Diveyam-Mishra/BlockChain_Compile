@@ -1,0 +1,28 @@
+# Python venvs
+venv/
+.env/
+.envrc
+.venv/
+*/.venv/
+*/venv/
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pytest_cache/
+.coverage
+htmlcov/
+
+# Node/Frontend
+node_modules/
+.next/
+dist/
+build/
+.cache/
+
+# OS / Editors
+.DS_Store
+.idea/
+.vscode/

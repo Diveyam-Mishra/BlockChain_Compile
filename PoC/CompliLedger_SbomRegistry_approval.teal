@@ -1,0 +1,150 @@
+#pragma version 8
+txn ApplicationID
+int 0
+==
+bnz main_l12
+txna ApplicationArgs 0
+byte "set_oracle"
+==
+bnz main_l11
+txna ApplicationArgs 0
+byte "submit_verification"
+==
+bnz main_l10
+txna ApplicationArgs 0
+byte "update_verification"
+==
+bnz main_l9
+txna ApplicationArgs 0
+byte "query_verification"
+==
+bnz main_l6
+err
+main_l6:
+txna ApplicationArgs 1
+box_get
+store 7
+store 6
+load 7
+bnz main_l8
+int 0
+itob
+log
+int 1
+return
+main_l8:
+load 6
+extract 0 8
+log
+int 1
+return
+main_l9:
+txn Sender
+byte "oracle_address"
+app_global_get
+==
+assert
+txna ApplicationArgs 1
+int 0
+txna ApplicationArgs 3
+btoi
+itob
+box_replace
+txna ApplicationArgs 1
+int 48
+global LatestTimestamp
+itob
+box_replace
+txna ApplicationArgs 1
+box_get
+store 1
+store 0
+load 1
+assert
+load 0
+extract 56 8
+btoi
+store 2
+int 128
+store 3
+int 64
+txna ApplicationArgs 2
+len
+-
+store 5
+txna ApplicationArgs 2
+len
+itob
+txna ApplicationArgs 2
+byte 0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+int 0
+load 5
+substring3
+concat
+concat
+store 4
+txna ApplicationArgs 1
+load 3
+load 4
+box_replace
+int 1
+return
+main_l10:
+txna ApplicationArgs 1
+int 200
+box_create
+assert
+txna ApplicationArgs 1
+int 0
+itob
+txn Sender
+concat
+global LatestTimestamp
+itob
+concat
+int 0
+itob
+concat
+txna ApplicationArgs 2
+len
+itob
+concat
+txna ApplicationArgs 2
+byte 0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+int 0
+int 64
+txna ApplicationArgs 2
+len
+-
+substring3
+concat
+concat
+int 0
+itob
+byte 0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+extract 0 64
+concat
+concat
+box_put
+int 1
+return
+main_l11:
+txn Sender
+byte "admin"
+app_global_get
+==
+assert
+byte "oracle_address"
+txna ApplicationArgs 1
+app_global_put
+int 1
+return
+main_l12:
+byte "admin"
+global CreatorAddress
+app_global_put
+byte "oracle_address"
+global ZeroAddress
+app_global_put
+int 1
+return

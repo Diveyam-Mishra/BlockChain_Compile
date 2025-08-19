@@ -1,0 +1,23 @@
+# Railway configuration for CompliLedger Backend API
+# Docs: https://docs.railway.app/guides/railway-toml
+
+name = "compliledger-backend"
+
+[build]
+# Use Dockerfile build, with project root as context
+builder = "DOCKERFILE"
+context = "."
+dockerfilePath = "compliledger/backend/Dockerfile"
+
+[deploy]
+# Docker CMD will be used; no explicit startCommand needed
+restartPolicyType = "ON_FAILURE"
+
+[variables]
+# Railway will inject PORT automatically
+API_HOST = "0.0.0.0"
+DEBUG = "false"
+# Add your own keys in the Railway Dashboard or via CLI:
+# PINATA_JWT = ""
+# ALGORAND_MNEMONIC = ""
+# OTHER_ENV = ""

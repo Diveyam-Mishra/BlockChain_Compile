@@ -1,0 +1,98 @@
+#pragma version 6
+txn ApplicationID
+int 0
+==
+bnz main_l10
+txna ApplicationArgs 0
+byte "set_oracle"
+==
+bnz main_l9
+txna ApplicationArgs 0
+byte "submit_verification"
+==
+bnz main_l8
+txna ApplicationArgs 0
+byte "update_verification"
+==
+bnz main_l7
+txna ApplicationArgs 0
+byte "query_verification"
+==
+bnz main_l6
+err
+main_l6:
+txna ApplicationArgs 1
+byte ".status"
+concat
+app_global_get
+itob
+log
+int 1
+return
+main_l7:
+txn Sender
+byte "oracle_address"
+app_global_get
+==
+assert
+txna ApplicationArgs 1
+byte ".status"
+concat
+txna ApplicationArgs 3
+btoi
+app_global_put
+txna ApplicationArgs 1
+byte ".oscal_cid"
+concat
+txna ApplicationArgs 2
+app_global_put
+txna ApplicationArgs 1
+byte ".verified_at"
+concat
+global LatestTimestamp
+app_global_put
+int 1
+return
+main_l8:
+txna ApplicationArgs 1
+byte ".status"
+concat
+int 0
+app_global_put
+txna ApplicationArgs 1
+byte ".submitter"
+concat
+txn Sender
+app_global_put
+txna ApplicationArgs 1
+byte ".profile_id"
+concat
+txna ApplicationArgs 2
+app_global_put
+txna ApplicationArgs 1
+byte ".timestamp"
+concat
+global LatestTimestamp
+app_global_put
+int 1
+return
+main_l9:
+txn Sender
+byte "admin"
+app_global_get
+==
+assert
+byte "oracle_address"
+txna ApplicationArgs 1
+app_global_put
+int 1
+return
+main_l10:
+byte "admin"
+global CreatorAddress
+app_global_put
+byte "oracle_address"
+global ZeroAddress
+app_global_put
+int 1
+return

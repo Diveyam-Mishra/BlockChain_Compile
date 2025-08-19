@@ -1,0 +1,85 @@
+#pragma version 6
+txn ApplicationID
+int 0
+==
+bnz main_l9
+txna ApplicationArgs 0
+byte "set_registry"
+==
+bnz main_l8
+txna ApplicationArgs 0
+byte "submit_result"
+==
+bnz main_l4
+err
+main_l4:
+txn Sender
+byte "admin"
+app_global_get
+==
+assert
+byte "ai_result_hash"
+txna ApplicationArgs 1
+app_global_put
+byte "controls_passed"
+txna ApplicationArgs 3
+btoi
+app_global_put
+byte "controls_failed"
+txna ApplicationArgs 4
+btoi
+app_global_put
+byte "last_artifact"
+txna ApplicationArgs 2
+app_global_put
+itxn_begin
+int appl
+itxn_field TypeEnum
+txna Applications 1
+itxn_field ApplicationID
+int NoOp
+itxn_field OnCompletion
+int 0
+itxn_field Fee
+byte "update_verification"
+itxn_field ApplicationArgs
+txna ApplicationArgs 2
+itxn_field ApplicationArgs
+txna ApplicationArgs 5
+itxn_field ApplicationArgs
+txna ApplicationArgs 4
+btoi
+int 0
+==
+bnz main_l7
+int 2
+main_l6:
+itob
+itxn_field ApplicationArgs
+itxn_submit
+int 1
+return
+main_l7:
+int 1
+b main_l6
+main_l8:
+txn Sender
+byte "admin"
+app_global_get
+==
+assert
+byte "registry_app_id"
+txna ApplicationArgs 1
+btoi
+app_global_put
+int 1
+return
+main_l9:
+byte "admin"
+global CreatorAddress
+app_global_put
+byte "registry_app_id"
+int 0
+app_global_put
+int 1
+return

@@ -1,0 +1,3 @@
+{ "bomFormat":"CycloneDX","specVersion":"1.4","version":1,
+  "metadata":{"component":{"type":"application","name":"demo","version":"1.0.0"}},
+  "components":[{"type":"library","name":"fastapi","version":"0.95.2"}] }
