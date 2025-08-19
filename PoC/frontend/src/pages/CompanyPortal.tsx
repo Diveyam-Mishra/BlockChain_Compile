@@ -10,8 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { artifactsApi, verificationApi } from '@/lib/api';
 import OnChainLinks from '@/components/OnChainLinks';
+import { useWalletContext } from '@/contexts/WalletContext';
 
 const CompanyPortal = () => {
+  const { isConnected, activeAccount } = useWalletContext();
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [artifactId, setArtifactId] = useState<string | null>(null);
   const [artifactHash, setArtifactHash] = useState<string | null>(null);
@@ -153,7 +155,15 @@ const CompanyPortal = () => {
     if (!artifactId || !complianceStandard) {
       toast({
         title: "Missing requirements",
-        description: "Please upload and parse an artifact, and select a profile",
+        description: "Please upload and parse an artifact, and select a profile.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (!isConnected || !activeAccount) {
+      toast({
+        title: "Wallet not connected",
+        description: "Please connect your Pera wallet to submit a verification request.",
         variant: "destructive",
       });
       return;
@@ -164,8 +174,8 @@ const CompanyPortal = () => {
     
     try {
       // kick off full pipeline by artifact id
-      try { console.debug('[ui] startAnalysis', { artifactId, profile: complianceStandard }); } catch {}
-      const res = await verificationApi.submitByArtifact(artifactId, complianceStandard);
+      try { console.debug('[ui] startAnalysis', { artifactId, profile: complianceStandard, wallet: activeAccount }); } catch {}
+      const res = await verificationApi.submit(artifactId, complianceStandard, activeAccount);
       setAnalysisProgress(100);
       setIsAnalyzing(false);
       // Keep UI in pending and start polling until terminal
@@ -417,10 +427,10 @@ const CompanyPortal = () => {
 
               <Button 
                 onClick={startAnalysis} 
-                disabled={!artifactId || !complianceStandard || isAnalyzing}
+                disabled={!artifactId || !complianceStandard || isAnalyzing || !isConnected}
                 className="w-full"
               >
-                {isAnalyzing ? 'Processing...' : 'Start Verification'}
+                {isAnalyzing ? 'Processing...' : !isConnected ? 'Connect Wallet to Verify' : 'Start Verification'}
               </Button>
             </CardContent>
           </Card>
